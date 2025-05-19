@@ -349,11 +349,12 @@ function InitializeObstacles() {
 
 
 function gameLoop(timestamp, playerName) {
+    console.log(playersPlayed)
     let levelName = document.querySelector(".levelName");
     levelName.innerHTML = `Level: ${level}`
     obs = [];
-    player = new Player(playerName, 50, canvas.height - 50, 50, 50, 10, canvas.height);
-    if(players.length < playerAmount){
+    if(players.length < playerAmount && players.length < playersPlayed + 1){
+        player = new Player(playerName, 50, canvas.height - 50, 50, 50, 10, canvas.height);
         players.push(player);
     }
     InitializeObstacles();
@@ -388,8 +389,10 @@ function gameLoop(timestamp, playerName) {
                         showQuestion();
                     }
                     else{
+                        playersPlayed++;
                         playerDeadCount++;
                         if(playerDeadCount < playerAmount){
+                            console.log("change")
                             changePlayer();
                         }
                         else{
@@ -446,6 +449,7 @@ function showQuestion() {
                 questionBox.removeChild(question);
             }
             else{
+                playersPlayed++;
                 playerDeadCount++;
                 console.log("wrong")
                 questionBox.removeChild(question);
@@ -459,30 +463,30 @@ function showQuestion() {
 
             }
         })
-        b.addEventListener("touchstart", () => {
-            if(b.innerText == randQuestion[5]) {
-                console.log("correct")
-                player.isDead = false;
-                player.revives--;
-                questionBox.style.display = "none";
-                canvas.style.display = "flex";
-                questionBox.removeChild(question);
+        // b.addEventListener("touchstart", () => {
+        //     if(b.innerText == randQuestion[5]) {
+        //         console.log("correct")
+        //         player.isDead = false;
+        //         player.revives--;
+        //         questionBox.style.display = "none";
+        //         canvas.style.display = "flex";
+        //         questionBox.removeChild(question);
 
-            }
-            else{
-                playerDeadCount++;
-                console.log("wrong")
-                questionBox.removeChild(question);
-                isRunning = false;
-                if(playerDeadCount < playerAmount) {
-                    changePlayer();
-                }
-                else{
-                    StartGame();
-                }
+        //     }
+        //     else{
+        //         playerDeadCount++;
+        //         console.log("wrong")
+        //         questionBox.removeChild(question);
+        //         isRunning = false;
+        //         if(playerDeadCount < playerAmount) {
+        //             changePlayer();
+        //         }
+        //         else{
+        //             StartGame();
+        //         }
 
-            }
-        })
+        //     }
+        // })
     })
     canvas.style.display = "none";
     questionBox.appendChild(question);
@@ -506,6 +510,7 @@ function StartGame() {
     document.getElementById("gameover").style.display = "none";
     isRunning = false
     if(playerDeadCount < playerAmount){
+        console.log(players.length)
         gameLoop(performance.now(), playerUsernames[playerDeadCount]);
     }
     else{
