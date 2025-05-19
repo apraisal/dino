@@ -131,7 +131,7 @@
   <div class="question flex column" style="display: none;">
     <div class=" top flex row">
       <div class="questionHeader">Question:     </div> 
-      <div class="timer">5s</div>
+      <div class="timer"></div>
     </div>
     <div class="questionText">What is the capital of France?</div>
     <div class="answerOptions flex column">
@@ -163,26 +163,28 @@
             <div class="gameoverScoreboard">
                 <p>Score Board:</p>
             </div>
-    </div>
+      </div>
+      <div class="unlocklevel"></div>
     <button onclick="gameReset()" id="overReset">Menu</button>
 
-</div>
+  </div>
 
 </div>
 
 
 <div class="newPlayerScreen">
+  <img id="zsl_building_background" src="./graphics/zsl_building.png">
   <div class="switchingMenu">
     <p>Now its another player's turn!</p>
     <button id="nextPlButton">Switch!</button>
   </div>
 </div>
 
-<script src="./scripts/audio.js"></script>
-<script src="./scripts/jsstarterpage.js"></script>
-<script src="./scripts/randomname.js"></script>
-<script src="./scripts/movemet.js"></script>
-<script src="./scripts/levelblock.js"></script>
+<script src="./scripts/audio.js" defer></script>
+<script src="./scripts/jsstarterpage.js" defer></script>
+<script src="./scripts/randomname.js" defer></script>
+<script src="./scripts/movemet.js" defer></script>
+<script src="./scripts/levelblock.js" defer></script>
 
 </body>
 </html>

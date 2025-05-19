@@ -16,6 +16,7 @@ function buttonpageplay() {
   else {
     mainpage.style.display="flex";
     startOptContainer.style.display="none";
+    scoreCounter();
   }
 }
 

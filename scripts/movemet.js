@@ -131,6 +131,22 @@
     rightBtn.addEventListener('mouseup', stopMove);
     rightBtn.addEventListener('mouseleave', stopMove);
 
+    upBtn.addEventListener('touchstart', () => startMove('up'));
+    upBtn.addEventListener('touchend', stopMove);
+    upBtn.addEventListener('touchleave', stopMove);
+
+    downBtn.addEventListener('touchstart', () => startMove('down'));
+    downBtn.addEventListener('touchend', stopMove);
+    downBtn.addEventListener('touchleave', stopMove);
+
+    leftBtn.addEventListener('touchstart', () => startMove('left'));
+    leftBtn.addEventListener('touchend', stopMove);
+    leftBtn.addEventListener('touchleave', stopMove);
+
+    rightBtn.addEventListener('touchstart', () => startMove('right'));
+    rightBtn.addEventListener('touchend', stopMove);
+    rightBtn.addEventListener('touchleave', stopMove);
+
     hrefBtn.addEventListener('click', () => {
       messageContainer.style.display = 'none';
       mainpage.style.display="none";

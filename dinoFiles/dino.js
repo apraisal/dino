@@ -1,6 +1,8 @@
 let canvas = document.getElementById("gameCanvas");
 let ctx = canvas.getContext("2d"); 
 let scoreboard = document.querySelector(".scoreboard");
+let gameport = document.querySelector(".gameport")
+let controls = document.querySelector(".controls")
 let obstacle  = new Image(50,50);
 obstacle.src = "graphics/desk.png"; // Path to your obstacle image
 let dinogame = document.querySelector("#dino");
@@ -12,6 +14,7 @@ let player;
 let players = [];
 let playerUsernames = [];
 let scoresArray = [];
+let playerDeadCount = 0;
 let playersPlayed = 0;
 let collisionObs = 0;
 let isRunning = false;
@@ -163,7 +166,7 @@ class Player {
         this.isDead = false;
         this.currentFrame = 0;
         this.lastFrameChange = 0; // Track the last time the frame was changed
-        this.animationSpeed = 250; // Change frame every 100ms
+        this.animationSpeed = 250; // Change frame every 250ms
         this.revives = 1;
     }
 
@@ -235,32 +238,32 @@ class Player {
     }
 
     speedUP() {
-        let obsSpeed = 10;
+        let obsSpeed = 10 + 1*level - 1;
         if(this.score >= 500 && this.score < 1000){
             this.scoreChange = 2;
             this.animationSpeed = 225;
-            obsSpeed = 12;
+            obsSpeed = 10 + 0.25*level - 1 + 1;
 
         }
         else if(this.score >= 1000 && this.score < 2000){
             this.scoreChange = 3;
             this.animationSpeed = 200;
-            obsSpeed = 14;   
+            obsSpeed = 10 + 0.25*level - 1 + 2;   
         }
         else if(this.score >= 2000 && this.score < 5000){
             this.scoreChange = 5;
             this.animationSpeed = 175;
-            obsSpeed = 15;   
+            obsSpeed = 10 + 0.25*level - 1 + 3;   
         }
         else if(this.score >= 5000 && this.score < 10000){            
             this.scoreChange = 7;
             this.animationSpeed = 125;
-            obsSpeed = 16;
+            obsSpeed = 10 + 0.25*level - 1 + 4;
         }
         else if(this.score >= 10000){            
             this.scoreChange = 10;
             this.animationSpeed = 100;
-            obsSpeed = 18;
+            obsSpeed = 10 + 0.25*level - 1 + 5;
         }
         obs.forEach(o => {
             o.speedX = obsSpeed;
@@ -348,10 +351,11 @@ function InitializeObstacles() {
 function gameLoop(timestamp, playerName) {
     let levelName = document.querySelector(".levelName");
     levelName.innerHTML = `Level: ${level}`
-    console.log(level);
     obs = [];
     player = new Player(playerName, 50, canvas.height - 50, 50, 50, 10, canvas.height);
-    players.push(player);
+    if(players.length < playerAmount){
+        players.push(player);
+    }
     InitializeObstacles();
 
     let lastFrameTime = 0;
@@ -364,11 +368,11 @@ function gameLoop(timestamp, playerName) {
         if (timeSinceLastFrame >= frameDuration) {
             lastFrameTime = timestamp;
 
-            addScore();
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             if(!player.isDead){
+                addScore();
                 player.speedUP();
                 player.grav();
                 player.updateAnimationFrame(timestamp);
@@ -380,10 +384,17 @@ function gameLoop(timestamp, playerName) {
                     player.playerDie();
                     obs[collisionObs].update(true);
                     if(player.revives > 0){
+                        player.revives--;
                         showQuestion();
                     }
                     else{
-                        StartGame();
+                        playerDeadCount++;
+                        if(playerDeadCount < playerAmount){
+                            changePlayer();
+                        }
+                        else{
+                            StartGame();
+                        }
                         return 0
                     }                    
                 }
@@ -421,6 +432,7 @@ function showQuestion() {
     let randQuestion = getRandomQuestion();
     let questionText = question.querySelector(".questionText"); 
     let button = question.querySelectorAll(".answerButton");
+    player.playerDie();
     questionText.innerText = randQuestion[0];
     button.forEach((b, index) => { 
         b.innerText = randQuestion[index+1];
@@ -434,19 +446,40 @@ function showQuestion() {
                 questionBox.removeChild(question);
             }
             else{
+                playerDeadCount++;
                 console.log("wrong")
                 questionBox.removeChild(question);
                 isRunning = false;
-                StartGame();
+                if(playerDeadCount < playerAmount) {
+                    changePlayer();
+                }
+                else{
+                    StartGame();
+                }
 
             }
         })
         b.addEventListener("touchstart", () => {
             if(b.innerText == randQuestion[5]) {
+                console.log("correct")
                 player.isDead = false;
+                player.revives--;
                 questionBox.style.display = "none";
                 canvas.style.display = "flex";
                 questionBox.removeChild(question);
+
+            }
+            else{
+                playerDeadCount++;
+                console.log("wrong")
+                questionBox.removeChild(question);
+                isRunning = false;
+                if(playerDeadCount < playerAmount) {
+                    changePlayer();
+                }
+                else{
+                    StartGame();
+                }
 
             }
         })
@@ -455,25 +488,74 @@ function showQuestion() {
     questionBox.appendChild(question);
 }
 
+function changePlayer() {
+    let newPlayerScreen = document.querySelector(".newPlayerScreen");
+    dinogame.style.display = "none";
+    newPlayerScreen.style.display = "flex";
+    let switchButton = newPlayerScreen.querySelector("#nextPlButton");
+    switchButton.addEventListener("click", () => {
+        StartGame();
+    })
+}
+
 function StartGame() {
-    console.log(playersPlayed)
+    let newPlayerScreen = document.querySelector(".newPlayerScreen");
+    newPlayerScreen.style.display = "none";
     dinogame.style.display = "flex";
     canvas.style.display = "flex";
     document.getElementById("gameover").style.display = "none";
     isRunning = false
-    if(playersPlayed < playerAmount){
-        playersPlayed++;
-        gameLoop(performance.now(), playerUsernames[playersPlayed-1]);
+    if(playerDeadCount < playerAmount){
+        gameLoop(performance.now(), playerUsernames[playerDeadCount]);
     }
     else{
-        playersPlayed = 0
+        playerDeadCount = 0;
         gameover();
     }
 }
 
-function gameover() {
+function resetGameState() {
     players = [];
-    console.log(scoresArray);
+    playerUsernames = [];
+    playerDeadCount = 0;
+    playersPlayed = 0;
+    collisionObs = 0;
+    isRunning = false;
+    if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId); // Cancel any running animation frame
+        animationFrameId = null;
+    }
+}
+
+function nextLevel() {
+    let istrue = false;
+    players.forEach(pl => {
+        console.log(pl.score)
+        if(pl.score >= level*1000 && level < 6){
+            unlockLevel(level+1);
+            istrue = true;
+        }
+    })
+    return istrue;
+}
+
+
+function gameover() {
+    let isNextLevelUnlocked = nextLevel()
+    let isLevelUnlocked = "";
+    if(isNextLevelUnlocked == true){
+        console.log(` YOU Unlocked level ${level+1}`);
+        isLevelUnlocked = ` YOU Unlocked level ${level+1}`;
+    }
+    else if(level == 6) {
+        console.log("You have already unlocked all the levels, congratulations!");
+        isLevelUnlocked = "You have already unlocked all the levels, congratulations!";
+    }
+    else{
+            console.log("unsufficent amount of points!");
+            isLevelUnlocked = "unsufficent amount of points!"
+        }
+    let unlocklevel = document.querySelector(".unlocklevel").innerHTML = isLevelUnlocked;
     let gameoverContainer = document.getElementById("gameover");
     let scoreboard = document.querySelector(".gameoverScoreboard");
     let winner = document.getElementById("winner");
@@ -488,14 +570,16 @@ function gameover() {
         scoreboard.appendChild(scoreText);
     });
     isMoving = true;
+    resetGameState();
 }
 
 function addScore() {
     scoreboard.innerHTML = "";
     scoresArray = [];
     players.forEach(player => {
-        if(!player.isDead){
+        if(player.isDead == false){
             player.addScore();
+            player.speedUP(); 
         }
         let tempObject = {
             name: player.name,
