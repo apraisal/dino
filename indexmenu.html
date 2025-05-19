@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./menu.css">
+  <link rel="stylesheet" href="./dinoFiles/style.css">
+  <title>DinoGame</title>
+  <link rel="icon" href="./graphics/player/icon.jpg" > 
+
+</head>
+<body>
+  
+<div id="startOptCointainer" class="noSelect">
+  <img class="backgroundIMG" src="./graphics/zsl_logo_only.svg">
+    <div class="backGradient"><h1>Dino game</h1></div>
+    <br>
+    <div class="buttons">
+      <img draggable="false" onclick="buttonpagestartSettings()" id="buttonpagestartSettings" src="./graphics/settings-button-icon.png"></img>
+      <img draggable="false" onclick="buttonpageplay()" id="buttonpageplay" src="./graphics/play-button-icon.png"></img>
+      <img draggable="false" onclick="buttonpageautor()" id="buttonpageautor" src="./graphics/authors-button-icon.png"></img>
+  </img>
+</div></div>
+
+<div id="PlayerChoiceContainer" class="noSelect">
+  <img class="backgroundIMG2" src="./graphics/zsl_logo.svg">
+    <button class="playerButton" value="1" id="onePlayer">1</button>
+    <button class="playerButton" value="2" id="twoPlayer">2</button>
+    <button class="playerButton" value="3" id="threePlayer">3</button>
+    <button class="playerButton" value="4" id="fourPlayer">4</button>
+    <div id="PCCtext">Please choose the number of players.</div>
+  </img>
+</div>
+
+<div id="settingsCointainer">
+  <img class="backgroundIMG2" src="./graphics/zsl_logo.svg">
+    <img onclick="backToStartSettings()" id="settingsback" src="./graphics/back-button-icon.png"></img>
+
+    <audio id="audioPlayer" loop>
+      <source src="audio\Harvest_Dawn.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+  
+    <div id="controls">
+      <button onclick="playAudio()">Play</button>
+      <button onclick="pauseAudio()">Pause</button>
+      <button onclick="nextSong()">Next Song</button>
+      <br><br>
+      <img onclick="audioMute()" id="volumeIcon" src="./graphics/volume-icon.png" alt="volume">
+      <input type="range" id="volumeSlider" min="0" max="1" step="0.01" oninput="adjustVolume(this.value)">
+    </div>
+  </img>
+</div>
+
+<div id="authorsCointainer">
+  <img class="backgroundIMG2" src="./graphics/zsl_logo.svg">
+    <p>Grzegorz Armański<br>Jakub Baranowski<br>Miłosz Grzyb<br>Michał Gouda<br></p>
+    <img onclick="backToStartSettingsfromAuthors()" id="settingsback" src="./graphics/back-button-icon.png"></img>
+  </img>
+</div>
+
+
+<div id="mainpage">
+
+  <img id="zsl_building_background" src="./graphics/zsl_building.png">
+
+  <div id="statsContainer">
+
+    <div id="player1stats" class="statsBlock">NAME: <div class="playerNames" id="word1"></div> <button onclick="generateWord1()" class="buttonname"><img src="./graphics/reload.png"></button> <br>    Player 1 <div id="score">Total Score : 0</div></div>
+    <div id="player2stats" class="statsBlock">NAME: <div class="playerNames" id="word2"></div><button onclick="generateWord2()" class="buttonname"><img src="./graphics/reload.png"></button><br> Player 2<div id="score"> Total Score : 0</div></div>
+    <div id="player3stats" class="statsBlock">NAME: <div class="playerNames" id="word3"></div><button onclick="generateWord3()" class="buttonname"><img src="./graphics/reload.png"></button><br> Player 3<div id="score"> Total Score : 0</div></div>
+    <div id="player4stats" class="statsBlock">NAME: <div class="playerNames" id="word4"></div><button onclick="generateWord4()" class="buttonname"><img src="./graphics/reload.png"></button><br> Player 4<div id="score"> Total Score : 0</div></div>
+
+    <div id="container">
+      <div id="movableObject">
+        <img id="ufo" src="graphics/ufo.gif">
+      </div>
+      <div id="triggerBlock1" class="triggerBlock" value=1></div>
+      <div id="triggerBlock2" class="triggerBlock" value=2></div>
+      <div id="triggerBlock3" class="triggerBlock" value=3></div>
+      <div id="triggerBlock4" class="triggerBlock" value=4></div>
+      <div id="triggerBlock5" class="triggerBlock" value=5></div>
+      <div id="triggerBlock6" class="triggerBlock" value=6></div>
+    </div>
+
+  </div>
+
+  <div id="buttonContainer">
+    <img draggable="false" id="upBtn" src="./graphics/arrow-up.png" onpointerdown="biggerwhenclick('upBtn')"  onpointerup="smallerafterclick('upBtn')">
+    <img draggable="false" id="leftBtn" src="./graphics/arrow-left.png" onpointerdown="biggerwhenclick('leftBtn')" onpointerup="smallerafterclick('leftBtn')">
+    <img draggable="false" id="downBtn" src="./graphics/arrow-down.png" onpointerdown="biggerwhenclick('downBtn')" onpointerup="smallerafterclick('downBtn')">
+    <img draggable="false" id="rightBtn" src="./graphics/arrow-right.png" onpointerdown="biggerwhenclick('rightBtn')" onpointerup="smallerafterclick('rightBtn')">
+  </div>
+  
+  <button onclick="hallToMenu()" id="buttonpause"> menu </button>
+
+</div>
+  
+
+  <div id="messageContainer">
+    <p id="messageText">You've hit a trigger block!</p>
+    <button id="dismissMessageBtn"> NO</button>
+    <button id="gotolevel"> YES ! </button>
+  </div>
+
+  <div class="playerFrames"></div>
+
+
+
+
+<!-- DINO -->
+<div id="dino">
+  <img id="zsl_building_background" src="./graphics/zsl_building.png">
+  
+  <div class="levelName"></div>
+  <div class="scoreboard"></div>
+
+
+  <div class="gameport">
+    <div class="questionBox" style="display: none;"></div>
+    <canvas id="gameCanvas" width="1000" height="200"></canvas>
+  </div>
+
+
+  <div class="controls">
+    <button class="controlButton" id="jump">jump</button>
+    <button class="controlButton" id="crouch">crouch</button>
+  </div>
+
+
+  <div class="question flex column" style="display: none;">
+    <div class=" top flex row">
+      <div class="questionHeader">Question:     </div> 
+      <div class="timer">5s</div>
+    </div>
+    <div class="questionText">What is the capital of France?</div>
+    <div class="answerOptions flex column">
+      <div class="flex row">
+        <button class="answerButton" id="answer1">Paris</button>
+        <button class="answerButton" id="answer2">London</button>
+      </div>
+      <div class="flex row">
+        <button class="answerButton" id="answer3">Berlin</button>
+        <button class="answerButton" id="answer4">Madrid</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./dinoFiles/dino.js"></script>
+  <script src="./dinoFiles/questions.js"></script>
+</div>
+
+
+
+<div class="deathSplash" id="gameover">
+  <div class="deathSprite"></div>
+
+  <div class="deathScoreboard">
+      <h2 id="deathText">Game over.</h2>
+
+      <div class="deathScores">
+            <div id="winner"></div>
+            <div class="gameoverScoreboard">
+                <p>Score Board:</p>
+            </div>
+    </div>
+    <button onclick="gameReset()" id="overReset">Menu</button>
+
+</div>
+
+</div>
+
+
+<div class="newPlayerScreen">
+  <div class="switchingMenu">
+    <p>Now its another player's turn!</p>
+    <button id="nextPlButton">Switch!</button>
+  </div>
+</div>
+
+<script src="./scripts/audio.js"></script>
+<script src="./scripts/jsstarterpage.js"></script>
+<script src="./scripts/randomname.js"></script>
+<script src="./scripts/movemet.js"></script>
+<script src="./scripts/levelblock.js"></script>
+
+</body>
+</html>
